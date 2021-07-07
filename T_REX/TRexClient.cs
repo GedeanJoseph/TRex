@@ -18,22 +18,15 @@ namespace TestaRegex
             InitializeComponent();
         }
 
-        private void  checaPadrao()
+        private void  patternValidate()
         {
             MatchCollection matchesEncontrados;
-            String padraoEncontrado = "";
+            var  padraoEncontrado = new StringBuilder(); 
             Regex regex;
 
             try
             {
                 regex = new Regex(this.txtRegexPattern.Text);
-
-                if (txtRegexPattern.Text == "")
-                {
-                    MessageBox.Show("Informe o PADRÃO regex que será utilizado para checar o texto de entrada.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    txtRegexPattern.Focus();
-                    return;
-                }
 
                 if (txtEntrada.Text == "")
                 {
@@ -61,32 +54,43 @@ namespace TestaRegex
                 {
                     if (padrao.Length > 0)
                     {
-                        padraoEncontrado += padrao + "\r\n";
+                        padraoEncontrado.AppendLine(padrao.Value);
                     }
                 }
+
+                lblStatus.Text = "";
+
                 this.txtMatchEncontrado.Clear();
-                this.txtMatchEncontrado.Text = padraoEncontrado;
+                this.txtMatchEncontrado.Text = padraoEncontrado.ToString();
                 this.btnLimpar.Focus();
+                padraoEncontrado.Clear();
+                txtRegexPattern.Focus();
             }
             catch (ArgumentException ex)
             {
-                MessageBox.Show("Verifique o padrão informado. Erro: " + Environment.NewLine + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                lblStatus.Text = $"Pattern Error: {ex.Message}.";
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro inesperado: " + Environment.NewLine + ex.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                lblStatus.Text = $"Unespected Error: {ex.Message}.";
             }
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            checaPadrao();
+            patternValidate();
         }
 
         private void btnLimpar_Click(object sender, EventArgs e)
         {
             this.txtEntrada.Clear();
             this.txtMatchEncontrado.Clear();
+            this.txtRegexPattern.Clear();
+        }
+
+        private void txtRegexPattern_TextChanged(object sender, EventArgs e)
+        {
+            patternValidate();
         }
     }
 }
